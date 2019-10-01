@@ -1,35 +1,34 @@
 export default class Token {
     private charset: String[];
     private counter: number;
-    public connected: Token;
+    public connected: Token | undefined;
+
     constructor(chars: string) {
         this.counter = 0;
         this.charset = chars.split('');
     }
 
-    get current() {
-        return this.charset[this.index];
+    private get index(): number {
+        return this.counter % this.charset.length;
     }
 
-    get length() {
-        return this.charset.length;
+    get current(): string {
+        return <string>this.charset[this.index];
     }
 
-
-    get rounds() {
+    get rounds(): number {
         return Math.floor(this.counter / this.charset.length);
     }
 
-    next() {
-        const roundBefore = this.rounds;
+    next(): string {
+        const previousRound = this.rounds;
         this.counter++;
-        if (this.rounds > roundBefore) {
-            this.connected.next();
+
+        if (this.rounds > previousRound) {
+            this.connected && this.connected.next();
         }
+
         return this.current;
     }
 
-    private get index() {
-        return this.counter % this.charset.length;
-    }
 }
